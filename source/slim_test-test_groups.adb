@@ -15,6 +15,14 @@ package body Slim_Test.Test_Groups is
         (Key'Address, Key'Length, Item, Result => <>);
    end Insert;
 
+   function Name (Self : Test_Group; Index : Positive) return String is
+      subtype Slice is String (1 .. Self.List (Index).Name_Length);
+      Result : Slice
+        with Import, Address => Self.List (Index).Name;
+   begin
+      return Result;
+   end Name;
+
    procedure Run (Self : in out Test_Group) is
    begin
       for Item of Self.List loop

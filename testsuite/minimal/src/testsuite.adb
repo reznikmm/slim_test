@@ -4,6 +4,7 @@
 
 with Ada.Text_IO;
 
+with Slim_Test.Results;
 with Slim_Test.Test_Groups;
 
 with Test_Init;
@@ -16,4 +17,14 @@ begin
 
    Ada.Text_IO.Put_Line
      ("Failed:" & Slim_Test.Test_Groups.Failed (Tests)'Image);
+
+   for J in 1 .. Tests.Length loop
+      if Slim_Test.Results.Is_Failed
+        (Slim_Test.Test_Groups.Result (Tests, J))
+      then
+         Ada.Text_IO.Put ("  ");
+         Ada.Text_IO.Put_Line
+           (Slim_Test.Test_Groups.Name (Tests, J));
+      end if;
+   end loop;
 end Testsuite;

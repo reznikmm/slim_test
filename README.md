@@ -24,6 +24,9 @@ The current public API is small:
 - `Slim_Test.Test_Groups.Test_Group` stores named test procedures
 - `Slim_Test.Test_Groups.Run` executes all tests in a group
 - `Slim_Test.Test_Groups.Failed` returns the number of failed tests
+- `Test_Group.Length` gives the number of tests in the group
+- `Slim_Test.Test_Groups.Name` returns test name by index
+- `Slim_Test.Test_Groups.Result` returns test result by index
 
 ## Requirements
 
@@ -117,9 +120,31 @@ Example with multiple tests:
 
 ```ada
 Tests : Slim_Test.Test_Groups.Test_Group :=
-  ["addition"        => Test_Math.Test_Addition'Access,
-	"multiplication" => Test_Math.Test_Multiplication'Access,
-	"parsing"        => Test_Parse.Test_Parse'Access];
+  ["addition"       => Test_Math.Test_Addition'Access,
+   "multiplication" => Test_Math.Test_Multiplication'Access,
+   "parsing"        => Test_Parse.Test_Parse'Access];
+```
+
+You can inspect each test result after `Run`:
+
+```ada
+Slim_Test.Test_Groups.Run (Tests);
+
+for Index in 1 .. Tests.Length loop
+   declare
+      Name   : constant String :=
+          Slim_Test.Test_Groups.Name (Tests, Index);
+
+      Result : constant Slim_Test.Results.Result :=
+        Slim_Test.Test_Groups.Result (Tests, Index);
+   begin
+      if Slim_Test.Results.Is_Failed (Result) then
+         Ada.Text_IO.Put_Line (Name & ": FAILED");
+      else
+         Ada.Text_IO.Put_Line (Name & ": PASSED");
+      end if;
+   end;
+end loop;
 ```
 
 ## Build And Run
@@ -152,12 +177,12 @@ alr -C testsuite/embedded build
 
 ```text
 .
-├── source/       # Slim_Test library sources
+├── source/        # Slim_Test library sources
 ├── testsuite/
 │   ├── minimal/   # Smallest runnable example
-│   └── embedded/  # Cross-project embedded example
-├── alire.toml    # Crate metadata and test action
-└── AGENTS.md     # Repository-specific instructions for coding agents
+│   └── embedded/  # Embedded project example
+├── alire.toml     # Crate metadata and test action
+└── AGENTS.md      # Repository-specific instructions for coding agents
 ```
 
 ## Status

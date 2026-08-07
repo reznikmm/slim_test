@@ -12,10 +12,21 @@ package Slim_Test.Test_Groups is
    type Test_Routine is access
      procedure (Result : in out Slim_Test.Results.Result);
 
-   type Test_Group (<>) is private
+   type Test_Group (Length : Natural) is private
      with Aggregate =>
        (Empty     => Test_Group_Stub,
         Add_Named => Insert);
+
+   procedure Run (Self : in out Test_Group);
+
+   function Failed (Self : Test_Group) return Natural;
+
+   function Name (Self : Test_Group; Index : Positive) return String;
+
+   function Result
+     (Self : Test_Group; Index : Positive) return Slim_Test.Results.Result;
+
+   --  Syntax sugar for creating and filling a new test group.
 
    function Test_Group_Stub (Length : Natural) return Test_Group;
 
@@ -23,10 +34,6 @@ package Slim_Test.Test_Groups is
      (Self : in out Test_Group;
       Key  : String;
       Item : not null Test_Routine);
-
-   procedure Run (Self : in out Test_Group);
-
-   function Failed (Self : Test_Group) return Natural;
 
 private
 
@@ -50,5 +57,9 @@ private
 
    function Failed (Self : Test_Group) return Natural is
      (Self.Failed);
+
+   function Result
+     (Self : Test_Group; Index : Positive) return Slim_Test.Results.Result is
+        (Self.List (Index).Result);
 
 end Slim_Test.Test_Groups;
