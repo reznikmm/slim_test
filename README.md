@@ -32,7 +32,7 @@ The current public API is small:
 
 ## Minimal Example
 
-The testsuite in `testsuite/` uses Slim_Test like this.
+The minimal example in `testsuite/minimal/` uses Slim_Test like this.
 
 Define a test procedure in a package or as standalone procedure:
 
@@ -87,6 +87,14 @@ begin
 end Test_Addition;
 ```
 
+## Example Projects
+
+Two example projects are included under `testsuite/`:
+
+- `testsuite/minimal/` is the smallest host-side executable example.
+- `testsuite/embedded/` shows the same pattern in a cross-project configured
+	for `arm-eabi` with the `light-tasking-stm32f4` runtime.
+
 ## Using In Your Project
 
 Add Slim_Test as a dependency:
@@ -122,10 +130,10 @@ From repository root:
 alr build
 ```
 
-Run the example testsuite:
+Run the minimal example:
 
 ```sh
-alr -C testsuite run
+alr -C testsuite/minimal run
 ```
 
 Or use the crate test action:
@@ -134,12 +142,20 @@ Or use the crate test action:
 alr test
 ```
 
+Build the embedded cross-project example:
+
+```sh
+alr -C testsuite/embedded build
+```
+
 ## Repository Layout
 
 ```text
 .
 ├── source/       # Slim_Test library sources
-├── testsuite/    # Minimal example of how to define and run tests
+├── testsuite/
+│   ├── minimal/   # Smallest runnable example
+│   └── embedded/  # Cross-project embedded example
 ├── alire.toml    # Crate metadata and test action
 └── AGENTS.md     # Repository-specific instructions for coding agents
 ```

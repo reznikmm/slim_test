@@ -29,4 +29,4 @@ development.contracts = "Yes"
 slim_test = "*"
 
 [[pins]]
-slim_test = { path = ".." }
+slim_test = { path = "../.." }

@@ -1,13 +1,19 @@
-name = "slim_test"
-description = "A unit test framework without harness burden"
+# SPDX-FileCopyrightText: 2026 Max Reznik <reznikmm@gmail.com>
+#
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
+name = "embedded"
+description = "Embedded example for slim_test"
 version = "0.1.0-dev"
 
 authors = ["Max Reznik"]
 maintainers = ["Max Reznik <reznikmm@gmail.com>"]
 maintainers-logins = ["reznikmm"]
 licenses = "Apache-2.0 WITH LLVM-exception"
-website = "https://github.com/reznikmm/slim_test"
+website = ""
 tags = []
+
+executables = ["embedded"]
 
 [build-switches]
 "*".Ada_Version = "Ada2022"
@@ -16,6 +22,12 @@ development.style_checks = ["-gnaty", "-gnaty-B"]
 development.contracts = "Yes"
 "*".debug_info = "Yes"
 
-[[actions]]
-type = "test"
-command = ["make", "-C" , "testsuite"]
+[build-profiles]
+"slim_test" = "development"
+
+[[depends-on]]
+gnat_arm_elf = "*"
+slim_test = "*"
+
+[[pins]]
+slim_test = { path = "../.." }
