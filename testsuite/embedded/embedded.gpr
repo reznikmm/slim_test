@@ -26,4 +26,11 @@ project Embedded is
       for Artifacts (".") use ("share");
    end Install;
 
+   package Ide is
+      for Program_Host use "localhost:4242";
+      for Communication_Protocol use "remote";
+      for Connection_Tool use "openocd";  --  "st-util";
+      for Connection_Config_Files use
+        ("interface/stlink.cfg", "target/stm32f4x.cfg");
+   end Ide;
 end Embedded;

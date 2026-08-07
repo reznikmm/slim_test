@@ -16,6 +16,9 @@ development.style_checks = ["-gnaty", "-gnaty-B"]
 development.contracts = "Yes"
 "*".debug_info = "Yes"
 
+[gpr-externals]
+SLIM_TEST_FIX = "" # Override source directory
+
 [[actions]]
 type = "test"
 command = ["make", "-C" , "testsuite"]

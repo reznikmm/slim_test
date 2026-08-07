@@ -9,7 +9,7 @@ Slim_Test is a very small unit test framework for Ada 2022.
 The design is intentionally minimal:
 
 - a test is a procedure that receives a `Slim_Test.Results.Result`
-- a test suite is an container aggregate of named tests in form of
+- a test suite is a container aggregate of named tests in the form
   ```ada
     ["test name" => Test'Access]
   ```
@@ -17,14 +17,29 @@ The design is intentionally minimal:
   so you don't need to pass the container around
 - you run whole test group with `Run` in one call
 - after running the suite you can enumerate the results with `Length`,
- `Name`, and `Result` functions
+  `Name`, and `Result` functions
+- each test result includes `Execution_Time`
 
 There is no generated harness and no assertion DSL. You write ordinary Ada
 procedures and make test report yourself.
 
 ## API Summary
 
-`[TBD]`
+Main packages:
+
+- `Slim_Test.Results` contains `Result` type and its operations:
+   - `Fail` marks a test as failed
+   - `Is_Failed` checks whether a test failed
+   - `Set_Execution_Time` stores measured execution time in a test result
+   - `Execution_Time` returns measured execution time from a test result
+- `Slim_Test.Generic_Test_Group`
+   - primary high-level API for running tests
+   - provides `Run`, `Length`, `Failed`, `Name`, `Result`
+- `Slim_Test.Test_Groups`
+   - the same API as `Generic_Test_Group` but using `Test_Group` type
+- `Slim_Test.Execution_Time`
+   - abstraction for time source and time delta type
+   - default implementation returns elapsed time in milliseconds
 
 ## Requirements
 
@@ -78,8 +93,11 @@ begin
    for J in 1 .. Tests.Length
       when Slim_Test.Results.Is_Failed (Tests.Result (J))
    loop
-       Ada.Text_IO.Put ("  ");
-       Ada.Text_IO.Put_Line (Tests.Name (J));
+      Ada.Text_IO.Put ("  ");
+      Ada.Text_IO.Put
+        (Slim_Test.Results.Execution_Time (Tests.Result (J))'Image);
+      Ada.Text_IO.Put ("  ");
+      Ada.Text_IO.Put_Line (Tests.Name (J));
    end loop;
 end Testsuite;
 ```
@@ -102,7 +120,31 @@ Two example projects are included under `testsuite/`:
 
 - `testsuite/minimal/` is the smallest host-side executable example.
 - `testsuite/embedded/` shows the same pattern in a cross-project configured
-   for `arm-eabi` with the `light-tasking-stm32f4` runtime.
+   for `arm-eabi` with the `light-tasking-stm32f4` runtime and a custom
+   `Slim_Test.Execution_Time` override.
+
+## Customizing Execution_Time
+
+`Slim_Test.Execution_Time` is intentionally replaceable.
+
+- By default (`source/slim_test-execution_time.*`) elapsed time is reported
+  in milliseconds.
+- To use board- or platform-specific timing, provide your own
+  `slim_test-execution_time.ads` and `slim_test-execution_time.adb`.
+- Point `SLIM_TEST_FIX` to the directory with replacement units.
+
+The root crate exposes this through `alire.toml`:
+
+- `[gpr-externals] SLIM_TEST_FIX = ""`
+
+The embedded example configures it with environment settings:
+
+- `[environment] SLIM_TEST_FIX.prepend = "${CRATE_ROOT}/src/fix"`
+
+Reference implementation is in:
+
+- `testsuite/embedded/src/fix/slim_test-execution_time.ads`
+- `testsuite/embedded/src/fix/slim_test-execution_time.adb`
 
 ## Using In Your Project
 
@@ -188,6 +230,12 @@ Build the embedded cross-project example:
 
 ```sh
 alr -C testsuite/embedded build
+```
+
+Run both examples using the testsuite make target:
+
+```sh
+make -C testsuite
 ```
 
 ## Repository Layout

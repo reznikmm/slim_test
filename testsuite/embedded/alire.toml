@@ -22,6 +22,9 @@ development.style_checks = ["-gnaty", "-gnaty-B"]
 development.contracts = "Yes"
 "*".debug_info = "Yes"
 
+[environment]
+SLIM_TEST_FIX.prepend = "${CRATE_ROOT}/src/fix"
+
 [build-profiles]
 "slim_test" = "development"
 
