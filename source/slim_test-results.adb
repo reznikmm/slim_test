@@ -5,9 +5,16 @@
 
 package body Slim_Test.Results is
 
-   procedure Fail (Self : out Result) is
+   procedure Fail (Self : in out Result) is
    begin
       Self.Failed := True;
    end Fail;
+
+   procedure Set_Execution_Time
+     (Self  : in out Result;
+      Value : Slim_Test.Execution_Time.Time_Span) is
+   begin
+      Self.Time := Value;
+   end Set_Execution_Time;
 
 end Slim_Test.Results;

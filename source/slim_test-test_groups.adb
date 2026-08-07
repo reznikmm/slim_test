@@ -3,6 +3,8 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ------------------------------------------------------------------
 
+with Slim_Test.Execution_Time;
+
 package body Slim_Test.Test_Groups is
 
    procedure Insert
@@ -26,8 +28,16 @@ package body Slim_Test.Test_Groups is
    procedure Run (Self : in out Test_Group) is
    begin
       for Item of Self.List loop
+         declare
+            use type Slim_Test.Execution_Time.Time;
+            Start : constant Slim_Test.Execution_Time.Time :=
+              Slim_Test.Execution_Time.Clock;
          begin
             Item.Routine (Item.Result);
+
+            Slim_Test.Results.Set_Execution_Time
+              (Item.Result,
+               Slim_Test.Execution_Time.Clock - Start);
          end;
 
          if Slim_Test.Results.Is_Failed (Item.Result) then

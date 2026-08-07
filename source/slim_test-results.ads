@@ -3,22 +3,34 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ------------------------------------------------------------------
 
+with Slim_Test.Execution_Time;
+
 package Slim_Test.Results is
-   pragma Pure;
 
    type Result is private;
 
-   procedure Fail (Self : out Result);
+   procedure Fail (Self : in out Result);
+
+   procedure Set_Execution_Time
+     (Self  : in out Result;
+      Value : Slim_Test.Execution_Time.Time_Span);
 
    function Is_Failed (Self : Result) return Boolean;
+
+   function Execution_Time
+     (Self : Result) return Slim_Test.Execution_Time.Time_Span;
 
 private
 
    type Result is record
       Failed : Boolean := False;
+      Time   : Slim_Test.Execution_Time.Time_Span;
    end record;
 
    function Is_Failed (Self : Result) return Boolean is
      (Self.Failed);
+
+   function Execution_Time
+     (Self : Result) return Slim_Test.Execution_Time.Time_Span is (Self.Time);
 
 end Slim_Test.Results;

@@ -7,7 +7,6 @@ with Slim_Test.Results;
 with System;
 
 package Slim_Test.Test_Groups is
-   pragma Pure;
 
    type Test_Routine is access
      procedure (Result : in out Slim_Test.Results.Result);

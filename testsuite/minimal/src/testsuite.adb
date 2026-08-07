@@ -21,6 +21,9 @@ begin
      when Slim_Test.Results.Is_Failed (Tests.Result (J))
    loop
       Ada.Text_IO.Put ("  ");
+      Ada.Text_IO.Put
+        (Slim_Test.Results.Execution_Time (Tests.Result (J))'Image);
+      Ada.Text_IO.Put ("  ");
       Ada.Text_IO.Put_Line (Tests.Name (J));
    end loop;
 end Testsuite;
