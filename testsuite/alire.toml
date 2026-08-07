@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2026 Max Reznik <reznikmm@gmail.com>
+#
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
+name = "testsuite"
+description = "Unit test suite for Slim_Test"
+version = "0.1.0-dev"
+
+authors = ["Max Reznik"]
+maintainers = ["Max Reznik <reznikmm@gmail.com>"]
+maintainers-logins = ["reznikmm"]
+licenses = "Apache-2.0 WITH LLVM-exception"
+website = ""
+tags = []
+
+executables = ["testsuite"]
+
+[build-switches]
+"*".Ada_Version = "Ada2022"
+development.optimization = ["-O0"]
+development.style_checks = ["-gnaty", "-gnaty-B"]
+development.contracts = "Yes"
+"*".debug_info = "Yes"
+
+[build-profiles]
+"slim_test" = "development"
+
+[[depends-on]]
+slim_test = "*"
+
+[[pins]]
+slim_test = { path = ".." }

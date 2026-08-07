@@ -1,0 +1,10 @@
+version = 1
+SPDX-PackageName = "slim_test"
+SPDX-PackageSupplier = "Max Reznik <reznikmm@gmail.com>"
+SPDX-PackageDownloadLocation = "https://github.com/reznikmm/slim_test"
+
+[[annotations]]
+path = ["README.md", "alire.toml", "AGENTS.md"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Max Reznik <reznikmm@gmail.com>"
+SPDX-License-Identifier = "Apache-2.0 WITH LLVM-exception"
