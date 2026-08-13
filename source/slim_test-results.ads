@@ -10,6 +10,10 @@ package Slim_Test.Results is
    type Result is private;
 
    procedure Fail (Self : in out Result);
+   --  Set result to Fail
+
+   procedure Assert (Self : in out Result; Ok : Boolean);
+   --  Set result to Fail if not Ok
 
    procedure Set_Execution_Time
      (Self  : in out Result;

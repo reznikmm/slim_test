@@ -5,6 +5,13 @@
 
 package body Slim_Test.Results is
 
+   procedure Assert (Self : in out Result; Ok : Boolean) is
+   begin
+      if not Ok then
+         Fail (Self);
+      end if;
+   end Assert;
+
    procedure Fail (Self : in out Result) is
    begin
       Self.Failed := True;
