@@ -14,8 +14,13 @@ package body Slim_Test.Results is
 
    procedure Fail (Self : in out Result) is
    begin
-      Self.Failed := True;
+      Self.State := Failed;
    end Fail;
+
+   procedure Skip (Self : in out Result) is
+   begin
+      Self.State := Skipped;
+   end Skip;
 
    procedure Set_Execution_Time
      (Self  : in out Result;

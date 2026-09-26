@@ -42,6 +42,8 @@ package body Slim_Test.Test_Groups is
 
          if Slim_Test.Results.Is_Failed (Item.Result) then
             Self.Failed := Self.Failed + 1;
+         elsif Slim_Test.Results.Is_Skipped (Item.Result) then
+            Self.Skipped := Self.Skipped + 1;
          end if;
       end loop;
    end Run;

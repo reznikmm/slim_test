@@ -20,6 +20,8 @@ package Slim_Test.Test_Groups is
 
    function Failed (Self : Test_Group) return Natural;
 
+   function Skipped (Self : Test_Group) return Natural;
+
    function Name (Self : Test_Group; Index : Positive) return String;
 
    function Result
@@ -46,9 +48,10 @@ private
    type Test_Item_Array is array (Positive range <>) of Test_Item;
 
    type Test_Group (Length : Natural) is record
-      Last   : Natural := 0;
-      Failed : Natural := 0;
-      List   : Test_Item_Array (1 .. Length);
+      Last    : Natural := 0;
+      Failed  : Natural := 0;
+      Skipped : Natural := 0;
+      List    : Test_Item_Array (1 .. Length);
    end record;
 
    function Test_Group_Stub (Length : Natural) return Test_Group is
@@ -56,6 +59,9 @@ private
 
    function Failed (Self : Test_Group) return Natural is
      (Self.Failed);
+
+   function Skipped (Self : Test_Group) return Natural is
+     (Self.Skipped);
 
    function Result
      (Self : Test_Group; Index : Positive) return Slim_Test.Results.Result is

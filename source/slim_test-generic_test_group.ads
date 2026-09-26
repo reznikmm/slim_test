@@ -19,6 +19,9 @@ package Slim_Test.Generic_Test_Group is
    function Failed return Natural;
    --  Number of failed tests in the group
 
+   function Skipped return Natural;
+   --  Number of skipped tests in the group
+
    function Name (Index : Positive) return String;
    --  Name of the test at the given index
 
@@ -32,6 +35,8 @@ private
    function Length return Natural is (Copy.Length);
 
    function Failed return Natural is (Slim_Test.Test_Groups.Failed (Copy));
+
+   function Skipped return Natural is (Slim_Test.Test_Groups.Skipped (Copy));
 
    function Name (Index : Positive) return String is
      (Slim_Test.Test_Groups.Name (Copy, Index));

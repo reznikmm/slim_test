@@ -29,12 +29,16 @@ Main packages:
 
 - `Slim_Test.Results` contains `Result` type and its operations:
    - `Fail` marks a test as failed
+   - `Skip` marks a test as intentionally not executed
+   - `Assert` marks a test as failed unless a condition holds
+   - `Is_Passed` checks whether a test neither failed nor was skipped
    - `Is_Failed` checks whether a test failed
+   - `Is_Skipped` checks whether a test was skipped
    - `Set_Execution_Time` stores measured execution time in a test result
    - `Execution_Time` returns measured execution time from a test result
 - `Slim_Test.Generic_Test_Group`
    - primary high-level API for running tests
-   - provides `Run`, `Length`, `Failed`, `Name`, `Result`
+   - provides `Run`, `Length`, `Failed`, `Skipped`, `Name`, `Result`
 - `Slim_Test.Test_Groups`
    - the same API as `Generic_Test_Group` but using `Test_Group` type
 - `Slim_Test.Execution_Time`
@@ -89,6 +93,7 @@ begin
    Tests.Run;
 
    Ada.Text_IO.Put_Line ("Failed:" & Tests.Failed'Image);
+   Ada.Text_IO.Put_Line ("Skipped:" & Tests.Skipped'Image);
 
    for J in 1 .. Tests.Length
       when Slim_Test.Results.Is_Failed (Tests.Result (J))
@@ -103,16 +108,41 @@ end Testsuite;
 ```
 
 If you want a test to fail only when a condition is false, write
-that condition directly:
+that condition directly, or use `Assert`:
 
 ```ada
 procedure Test_Addition (Result : in out Slim_Test.Results.Result) is
 begin
-   if 2 + 2 /= 4 then
+   if 2 * 2 /= 4 then
       Slim_Test.Results.Fail (Result);
    end if;
 end Test_Addition;
 ```
+
+```ada
+procedure Test_Addition (Result : in out Slim_Test.Results.Result) is
+begin
+   Slim_Test.Results.Assert (Result, 2 + 2 = 4);
+end Test_Addition;
+```
+
+If a test cannot run at all (missing hardware, unsupported configuration,
+a command-line option that was not given), call `Skip` instead of `Fail`:
+
+```ada
+procedure Test_Requires_Device (Result : in out Slim_Test.Results.Result) is
+begin
+   if Device_Present then
+      Slim_Test.Results.Assert (Result, Device_Check);
+   else
+      Slim_Test.Results.Skip (Result);
+   end if;
+end Test_Requires_Device;
+```
+
+A skipped test is neither passed nor failed: `Is_Skipped` is true for it,
+`Is_Passed` and `Is_Failed` are false, and it is counted in `Skipped`
+rather than `Failed` by the test group.
 
 ## Example Projects
 
@@ -187,6 +217,8 @@ for Index in 1 .. Tests.Length loop
    begin
       if Slim_Test.Results.Is_Failed (Result) then
          Ada.Text_IO.Put_Line (Name & ": FAILED");
+      elsif Slim_Test.Results.Is_Skipped (Result) then
+         Ada.Text_IO.Put_Line (Name & ": SKIPPED");
       else
          Ada.Text_IO.Put_Line (Name & ": PASSED");
       end if;
@@ -254,12 +286,12 @@ make -C testsuite
 
 Right now Slim_Test is intentionally tiny. It gives you:
 
-- a common result type for tests
+- a common result type for tests, with Passed/Failed/Skipped status
 - a container for named tests
 - sequential execution
-- a failed test counter
+- failed and skipped test counters
 
-It does not currently provide assertions, filtering, per-test output, fixtures, or exception reporting.
+It does not currently provide filtering, per-test output, fixtures, or exception reporting.
 
 ## Maintainer
 
