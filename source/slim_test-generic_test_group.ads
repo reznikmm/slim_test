@@ -30,18 +30,18 @@ package Slim_Test.Generic_Test_Group is
 
 private
 
-   Copy : Slim_Test.Test_Groups.Test_Group := Group;
+   Output : Slim_Test.Results.Result_Array (1 .. Group.Length);
 
-   function Length return Natural is (Copy.Length);
+   function Length return Natural is (Group.Length);
 
-   function Failed return Natural is (Slim_Test.Test_Groups.Failed (Copy));
+   function Failed return Natural is (Slim_Test.Results.Failed (Output));
 
-   function Skipped return Natural is (Slim_Test.Test_Groups.Skipped (Copy));
+   function Skipped return Natural is (Slim_Test.Results.Skipped (Output));
 
    function Name (Index : Positive) return String is
-     (Slim_Test.Test_Groups.Name (Copy, Index));
+     (Slim_Test.Test_Groups.Name (Group, Index));
 
    function Result (Index : Positive) return Slim_Test.Results.Result is
-     (Slim_Test.Test_Groups.Result (Copy, Index));
+     (Output (Index));
 
 end Slim_Test.Generic_Test_Group;

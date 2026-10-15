@@ -7,7 +7,7 @@ package body Slim_Test.Generic_Test_Group is
 
    procedure Run is
    begin
-      Slim_Test.Test_Groups.Run (Copy);
+      Slim_Test.Test_Groups.Run (Group, Output);
    end Run;
 
 end Slim_Test.Generic_Test_Group;

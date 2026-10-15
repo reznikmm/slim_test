@@ -16,8 +16,8 @@ The design is intentionally minimal:
 - test suite can be wrapped into a generic package,
   so you don't need to pass the container around
 - you run whole test group with `Run` in one call
-- after running the suite you can enumerate the results with `Length`,
-  `Name`, and `Result` functions
+- after running the suite you can enumerate over results to find
+  successed, failed, skipped tests.
 - each test result includes `Execution_Time`
 
 There is no generated harness and no assertion DSL. You write ordinary Ada
@@ -40,7 +40,7 @@ Main packages:
    - primary high-level API for running tests
    - provides `Run`, `Length`, `Failed`, `Skipped`, `Name`, `Result`
 - `Slim_Test.Test_Groups`
-   - the same API as `Generic_Test_Group` but using `Test_Group` type
+   - the API with explicit result array, uses `Test_Group` type
 - `Slim_Test.Execution_Time`
    - abstraction for time source and time delta type
    - default implementation returns elapsed time in milliseconds
@@ -232,9 +232,12 @@ Low-level alternative (without `Generic_Test_Group`):
 declare
    Group : Slim_Test.Test_Groups.Test_Group :=
      ["addition" => Test_Math.Test_Addition'Access];
+
+   Result : Slim_Test.Results.Result_Array (1 .. Tests.Length);
+
 begin
-   Slim_Test.Test_Groups.Run (Group);
-   Ada.Text_IO.Put_Line ("Failed:" & Slim_Test.Test_Groups.Failed (Group)'Image);
+   Slim_Test.Test_Groups.Run (Group, Result);
+   Ada.Text_IO.Put_Line ("Failed:" & Slim_Test.Results.Failed (Result)'Image);
 end;
 ```
 

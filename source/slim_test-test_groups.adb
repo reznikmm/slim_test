@@ -13,8 +13,7 @@ package body Slim_Test.Test_Groups is
       Item : not null Test_Routine) is
    begin
       Self.Last := Self.Last + 1;
-      Self.List (Self.Last) :=
-        (Key'Address, Key'Length, Item, Result => <>);
+      Self.List (Self.Last) := (Key'Address, Key'Length, Item);
    end Insert;
 
    function Name (Self : Test_Group; Index : Positive) return String is
@@ -25,26 +24,23 @@ package body Slim_Test.Test_Groups is
       return Result;
    end Name;
 
-   procedure Run (Self : in out Test_Group) is
+   procedure Run
+     (Self   : Test_Group;
+      Result : out Slim_Test.Results.Result_Array) is
    begin
-      for Item of Self.List loop
+      for J in Self.List'Range loop
          declare
             use type Slim_Test.Execution_Time.Time;
+            Item  renames Self.List (J);
             Start : constant Slim_Test.Execution_Time.Time :=
               Slim_Test.Execution_Time.Clock;
          begin
-            Item.Routine (Item.Result);
+            Item.Routine (Result (J));
 
             Slim_Test.Results.Set_Execution_Time
-              (Item.Result,
+              (Result (J),
                Slim_Test.Execution_Time.Clock - Start);
          end;
-
-         if Slim_Test.Results.Is_Failed (Item.Result) then
-            Self.Failed := Self.Failed + 1;
-         elsif Slim_Test.Results.Is_Skipped (Item.Result) then
-            Self.Skipped := Self.Skipped + 1;
-         end if;
       end loop;
    end Run;
 

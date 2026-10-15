@@ -17,10 +17,15 @@ package body Slim_Test.Results is
       Self.State := Failed;
    end Fail;
 
-   procedure Skip (Self : in out Result) is
+   function Failed (List : Result_Array) return Natural is
+      Result : Natural := 0;
    begin
-      Self.State := Skipped;
-   end Skip;
+      for Item of List when Is_Failed (Item) loop
+         Result := Result + 1;
+      end loop;
+
+      return Result;
+   end Failed;
 
    procedure Set_Execution_Time
      (Self  : in out Result;
@@ -28,5 +33,20 @@ package body Slim_Test.Results is
    begin
       Self.Time := Value;
    end Set_Execution_Time;
+
+   procedure Skip (Self : in out Result) is
+   begin
+      Self.State := Skipped;
+   end Skip;
+
+   function Skipped (List : Result_Array) return Natural is
+      Result : Natural := 0;
+   begin
+      for Item of List when Is_Skipped (Item) loop
+         Result := Result + 1;
+      end loop;
+
+      return Result;
+   end Skipped;
 
 end Slim_Test.Results;

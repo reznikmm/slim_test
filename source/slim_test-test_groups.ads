@@ -13,19 +13,24 @@ package Slim_Test.Test_Groups is
 
    type Test_Group (Length : Natural) is private
      with Aggregate =>
-       (Empty     => Test_Group_Stub,
-        Add_Named => Insert);
+       (Empty             => Test_Group_Stub,
+        Add_Named         => Insert,
+        Constant_Indexing => Name);
+   --  Test group is set of test routines with corresponding names.
+   --
+   --  First two aspects let you construct the group with named aggegate:
+   --
+   --     G : Test_Group := ["T1" => P1'Access, "T2" => P2'Access];
+   --
+   --  Constant_Indexing aspec allows shortcuts for test name: `G(2)="T2"`
 
-   procedure Run (Self : in out Test_Group);
-
-   function Failed (Self : Test_Group) return Natural;
-
-   function Skipped (Self : Test_Group) return Natural;
+   procedure Run
+     (Self   : Test_Group;
+      Result : out Slim_Test.Results.Result_Array);
+   --  Run each test of the group and populate Result
 
    function Name (Self : Test_Group; Index : Positive) return String;
-
-   function Result
-     (Self : Test_Group; Index : Positive) return Slim_Test.Results.Result;
+   --  Return test name of given index
 
    --  Syntax sugar for creating and filling a new test group.
 
@@ -42,29 +47,16 @@ private
       Name        : System.Address;
       Name_Length : Natural;
       Routine     : Test_Routine;
-      Result      : Slim_Test.Results.Result;
    end record;
 
    type Test_Item_Array is array (Positive range <>) of Test_Item;
 
    type Test_Group (Length : Natural) is record
       Last    : Natural := 0;
-      Failed  : Natural := 0;
-      Skipped : Natural := 0;
       List    : Test_Item_Array (1 .. Length);
    end record;
 
    function Test_Group_Stub (Length : Natural) return Test_Group is
      (Length => Length, others => <>);
-
-   function Failed (Self : Test_Group) return Natural is
-     (Self.Failed);
-
-   function Skipped (Self : Test_Group) return Natural is
-     (Self.Skipped);
-
-   function Result
-     (Self : Test_Group; Index : Positive) return Slim_Test.Results.Result is
-        (Self.List (Index).Result);
 
 end Slim_Test.Test_Groups;

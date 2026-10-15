@@ -34,6 +34,14 @@ package Slim_Test.Results is
    function Execution_Time
      (Self : Result) return Slim_Test.Execution_Time.Time_Span;
 
+   type Result_Array is array (Positive range <>) of Result;
+
+   function Failed (List : Result_Array) return Natural;
+   --  Return number of failed tests in the list
+
+   function Skipped (List : Result_Array) return Natural;
+   --  Return number of skipped tests in the list
+
 private
 
    type Status is (Passed, Failed, Skipped);
