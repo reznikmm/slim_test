@@ -35,10 +35,10 @@ package body Slim_Test.Groups is
             Start : constant Slim_Test.Execution_Time.Time :=
               Slim_Test.Execution_Time.Clock;
          begin
-            Item.Routine (Result (J));
+            Item.Routine (Result (J - 1 + Result'First));
 
             Slim_Test.Results.Set_Execution_Time
-              (Result (J),
+              (Result (J - 1 + Result'First),
                Slim_Test.Execution_Time.Clock - Start);
          end;
       end loop;

@@ -13,20 +13,20 @@ package Slim_Test.Groups is
 
    type Test_Group (Length : Natural) is private
      with Aggregate =>
-       (Empty             => Test_Group_Stub,
-        Add_Named         => Insert,
-        Constant_Indexing => Name);
+       (Empty     => Test_Group_Stub,
+        Add_Named => Insert);
    --  Test group is set of test routines with corresponding names.
    --
-   --  First two aspects let you construct the group with named aggegate:
+   --  Aggregate aspect let you construct the group with named aggegate:
    --
    --     G : Test_Group := ["T1" => P1'Access, "T2" => P2'Access];
    --
-   --  Constant_Indexing aspec allows shortcuts for test name: `G(2)="T2"`
 
    procedure Run
      (Self   : Test_Group;
-      Result : out Slim_Test.Results.Result_Array);
+      Result : out Slim_Test.Results.Result_Array)
+        with Pre => Result'Length = Self.Length;
+   --
    --  Run each test of the group and populate Result
 
    function Name (Self : Test_Group; Index : Positive) return String;
@@ -40,6 +40,8 @@ package Slim_Test.Groups is
      (Self : in out Test_Group;
       Key  : String;
       Item : not null Test_Routine);
+
+   type Test_Group_Access is access constant Test_Group;
 
 private
 
