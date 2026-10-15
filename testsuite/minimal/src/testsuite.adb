@@ -5,12 +5,12 @@
 with Ada.Text_IO;
 
 with Slim_Test.Results;
-with Slim_Test.Generic_Test_Group;
+with Slim_Test.Generic_Group;
 
 with Test_Init;
 
 procedure Testsuite is
-   package Tests is new Slim_Test.Generic_Test_Group
+   package Tests is new Slim_Test.Generic_Group
      (["test 1" => Test_Init.Test_One'Access]);
 begin
    Tests.Run;

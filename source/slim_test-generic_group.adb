@@ -3,11 +3,11 @@
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ------------------------------------------------------------------
 
-package body Slim_Test.Generic_Test_Group is
+package body Slim_Test.Generic_Group is
 
    procedure Run is
    begin
-      Slim_Test.Test_Groups.Run (Group, Output);
+      Slim_Test.Groups.Run (Group, Output);
    end Run;
 
-end Slim_Test.Generic_Test_Group;
+end Slim_Test.Generic_Group;

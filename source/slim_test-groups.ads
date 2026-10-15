@@ -6,7 +6,7 @@
 with Slim_Test.Results;
 with System;
 
-package Slim_Test.Test_Groups is
+package Slim_Test.Groups is
 
    type Test_Routine is access
      procedure (Result : in out Slim_Test.Results.Result);
@@ -59,4 +59,4 @@ private
    function Test_Group_Stub (Length : Natural) return Test_Group is
      (Length => Length, others => <>);
 
-end Slim_Test.Test_Groups;
+end Slim_Test.Groups;

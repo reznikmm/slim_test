@@ -4,11 +4,11 @@
 ------------------------------------------------------------------
 
 with Slim_Test.Results;
-with Slim_Test.Test_Groups;
+with Slim_Test.Groups;
 
 generic
-   Group : Slim_Test.Test_Groups.Test_Group;
-package Slim_Test.Generic_Test_Group is
+   Group : Slim_Test.Groups.Test_Group;
+package Slim_Test.Generic_Group is
 
    procedure Run;
    --  Run all tests in the group
@@ -39,9 +39,9 @@ private
    function Skipped return Natural is (Slim_Test.Results.Skipped (Output));
 
    function Name (Index : Positive) return String is
-     (Slim_Test.Test_Groups.Name (Group, Index));
+     (Slim_Test.Groups.Name (Group, Index));
 
    function Result (Index : Positive) return Slim_Test.Results.Result is
      (Output (Index));
 
-end Slim_Test.Generic_Test_Group;
+end Slim_Test.Generic_Group;

@@ -5,7 +5,7 @@
 
 with Slim_Test.Execution_Time;
 
-package body Slim_Test.Test_Groups is
+package body Slim_Test.Groups is
 
    procedure Insert
      (Self : in out Test_Group;
@@ -44,4 +44,4 @@ package body Slim_Test.Test_Groups is
       end loop;
    end Run;
 
-end Slim_Test.Test_Groups;
+end Slim_Test.Groups;

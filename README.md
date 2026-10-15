@@ -36,10 +36,10 @@ Main packages:
    - `Is_Skipped` checks whether a test was skipped
    - `Set_Execution_Time` stores measured execution time in a test result
    - `Execution_Time` returns measured execution time from a test result
-- `Slim_Test.Generic_Test_Group`
+- `Slim_Test.Generic_Group`
    - primary high-level API for running tests
    - provides `Run`, `Length`, `Failed`, `Skipped`, `Name`, `Result`
-- `Slim_Test.Test_Groups`
+- `Slim_Test.Groups`
    - the API with explicit result array, uses `Test_Group` type
 - `Slim_Test.Execution_Time`
    - abstraction for time source and time delta type
@@ -77,17 +77,17 @@ package body Test_Init is
 end Test_Init;
 ```
 
-Build a group of named tests and instantiate `Slim_Test.Generic_Test_Group`:
+Build a group of named tests and instantiate `Slim_Test.Generic_Group`:
 
 ```ada
 with Ada.Text_IO;
 with Slim_Test.Results;
-with Slim_Test.Generic_Test_Group;
-with Slim_Test.Test_Groups;
+with Slim_Test.Generic_Group;
+with Slim_Test.Groups;
 with Test_Init;
 
 procedure Testsuite is
-   package Tests is new Slim_Test.Generic_Test_Group
+   package Tests is new Slim_Test.Generic_Group
       (["test 1" => Test_Init.Test_One'Access]);
 begin
    Tests.Run;
@@ -188,7 +188,7 @@ Then:
 
 1. Create one or more test procedures with the profile
    `procedure (Result : in out Slim_Test.Results.Result)`.
-2. Instantiate `Slim_Test.Generic_Test_Group` with a named aggregate.
+2. Instantiate `Slim_Test.Generic_Group` with a named aggregate.
 3. Call `Run` on the instantiated package.
 4. Read `Failed`, and optionally iterate `1 .. Length` with
    `Name` and `Result` for per-test reporting.
@@ -196,7 +196,7 @@ Then:
 Example with multiple tests:
 
 ```ada
-package Tests is new Slim_Test.Generic_Test_Group
+package Tests is new Slim_Test.Generic_Group
   (["addition"       => Test_Math.Test_Addition'Access,
     "multiplication" => Test_Math.Test_Multiplication'Access,
     "parsing"        => Test_Parse.Test_Parse'Access]);
@@ -226,17 +226,17 @@ for Index in 1 .. Tests.Length loop
 end loop;
 ```
 
-Low-level alternative (without `Generic_Test_Group`):
+Low-level alternative (without `Generic_Group`):
 
 ```ada
 declare
-   Group : Slim_Test.Test_Groups.Test_Group :=
+   Group : Slim_Test.Groups.Test_Group :=
      ["addition" => Test_Math.Test_Addition'Access];
 
    Result : Slim_Test.Results.Result_Array (1 .. Tests.Length);
 
 begin
-   Slim_Test.Test_Groups.Run (Group, Result);
+   Slim_Test.Groups.Run (Group, Result);
    Ada.Text_IO.Put_Line ("Failed:" & Slim_Test.Results.Failed (Result)'Image);
 end;
 ```
