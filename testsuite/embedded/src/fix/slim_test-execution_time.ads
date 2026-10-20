@@ -17,13 +17,24 @@ package Slim_Test.Execution_Time is
 
    function Clock return Time;
 
-   subtype Time_Span is Interfaces.Unsigned_32;
+   type Time_Span is private;
+
+   Zero : constant Time_Span;
 
    function "-" (Left, Right : Time) return Time_Span;
+
+   function "+" (Left, Right : Time_Span) return Time_Span;
+
+   function Image (Value : Time_Span) return String;
+   --  Text for reports, here it is a number of timer ticks
 
 private
 
    type Time is new System.BB.Board_Support.Time.Timer_Interval;
+
+   type Time_Span is new Interfaces.Unsigned_32;
+
+   Zero : constant Time_Span := 0;
 
    function Clock return Time is
      (Time'Mod (System.BB.Board_Support.Time.Read_Clock));

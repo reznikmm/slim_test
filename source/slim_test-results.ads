@@ -48,7 +48,8 @@ private
 
    type Result is record
       State : Status := Passed;
-      Time  : Slim_Test.Execution_Time.Time_Span;
+      Time  : Slim_Test.Execution_Time.Time_Span :=
+        Slim_Test.Execution_Time.Zero;
    end record;
 
    function Is_Passed (Self : Result) return Boolean is

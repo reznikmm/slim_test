@@ -23,6 +23,21 @@ The design is intentionally minimal:
 There is no generated harness and no assertion DSL. You write ordinary Ada
 procedures and make test report yourself.
 
+## Contents
+
+- [API Summary](#api-summary)
+- [Requirements](#requirements)
+- [Minimal Example](#minimal-example)
+- [JUnit Report For GitLab](#junit-report-for-gitlab)
+- [Example Projects](#example-projects)
+- [Customizing Execution_Time](#customizing-execution_time)
+- [Using In Your Project](#using-in-your-project)
+- [Build And Run](#build-and-run)
+- [Repository Layout](#repository-layout)
+- [Status](#status)
+- [Maintainer](#maintainer)
+- [License](#license)
+
 ## API Summary
 
 Main packages:
@@ -41,9 +56,15 @@ Main packages:
    - provides `Run`, `Length`, `Failed`, `Skipped`, `Name`, `Result`
 - `Slim_Test.Groups`
    - the API with explicit result array, uses `Test_Group` type
+- `Slim_Test.Group_Lists`
+   - a named list of test groups, run with one call into a `Result_Array`
+- `Slim_Test.JUnit_Reports`
+   - generic procedures that write test results as a JUnit XML report:
+     `Generic_Group_Report`, `Group_List_Report`, `Test_Group_Report`
 - `Slim_Test.Execution_Time`
-   - abstraction for time source and time delta type
-   - default implementation returns elapsed time in milliseconds
+   - abstraction for time source and time delta type (`Time_Span`, `Zero`,
+     `"+"`, `Image`)
+   - default implementation measures CPU time and prints it in seconds
 
 ## Requirements
 
@@ -100,7 +121,8 @@ begin
    loop
       Ada.Text_IO.Put ("  ");
       Ada.Text_IO.Put
-        (Slim_Test.Results.Execution_Time (Tests.Result (J))'Image);
+        (Slim_Test.Execution_Time.Image
+           (Slim_Test.Results.Execution_Time (Tests.Result (J))));
       Ada.Text_IO.Put ("  ");
       Ada.Text_IO.Put_Line (Tests.Name (J));
    end loop;
@@ -144,6 +166,63 @@ A skipped test is neither passed nor failed: `Is_Skipped` is true for it,
 `Is_Passed` and `Is_Failed` are false, and it is counted in `Skipped`
 rather than `Failed` by the test group.
 
+## JUnit Report For GitLab
+
+`Slim_Test.JUnit_Reports` has generic procedures that write test results
+as JUnit XML, one for each way to run tests:
+
+- `Generic_Group_Report` for a `Slim_Test.Generic_Group` instance
+- `Test_Group_Report (Group, Result)` for `Slim_Test.Groups`
+- `Group_List_Report (List, Result)` for `Slim_Test.Group_Lists`
+
+They have no dependencies: the generic formal `Put (Text : String)`
+receives pieces of the document, so you decide where they go (a file,
+console, UART...). The optional formal `Suite_Name` (`"testsuite"` by
+default) names the test suite. Failed tests get `<failure>`, skipped tests
+get `<skipped/>`, and execution time is reported with
+`Slim_Test.Execution_Time.Image`.
+
+```ada
+with Ada.Text_IO;
+with Slim_Test.Generic_Group;
+with Slim_Test.JUnit_Reports;
+with Test_Init;
+
+procedure Testsuite is
+   package Tests is new Slim_Test.Generic_Group
+     (["test 1" => Test_Init.Test_One'Access]);
+
+   procedure Report is new Slim_Test.JUnit_Reports.Generic_Group_Report
+     (Tests, Ada.Text_IO.Put);
+
+   File : Ada.Text_IO.File_Type;
+begin
+   Tests.Run;
+
+   Ada.Text_IO.Create (File, Name => "junit-report.xml");
+   Ada.Text_IO.Set_Output (File);
+   Report;
+   Ada.Text_IO.Close (File);
+end Testsuite;
+```
+
+Then publish the file as a GitLab test report in `.gitlab-ci.yml`:
+
+```yaml
+test:
+  script:
+    - alr -C testsuite/minimal run
+  artifacts:
+    when: always
+    reports:
+      junit: testsuite/minimal/junit-report.xml
+```
+
+`when: always` keeps the report when the job fails. GitLab shows the results
+in the merge request widget and the pipeline's **Tests** tab. Make the
+executable exit with a non-zero status when `Failed` is not zero if you also
+want the job itself to fail.
+
 ## Example Projects
 
 Two example projects are included under `testsuite/`:
@@ -157,8 +236,16 @@ Two example projects are included under `testsuite/`:
 
 `Slim_Test.Execution_Time` is intentionally replaceable.
 
-- By default (`source/slim_test-execution_time.*`) elapsed time is reported
-  in milliseconds.
+- The package declares the private `Time_Span` type with the operations
+  the framework needs: `Zero`, `"+"`, `"-"` (on `Time`) and `Image`.
+  You choose the representation (seconds, CPU ticks, ...) and what `Image`
+  prints.
+- `Image` is used for console output and as the `time` attribute in
+  the JUnit report, so return seconds from it if you want GitLab to show
+  correct durations.
+- By default (`source/slim_test-execution_time.*`) `Image` prints elapsed
+  CPU time in seconds with millisecond precision, like `0.012`.
+  The embedded example prints timer ticks.
 - To use board- or platform-specific timing, provide your own
   `slim_test-execution_time.ads` and `slim_test-execution_time.adb`.
 - Point `SLIM_TEST_FIX` to the directory with replacement units.
