@@ -13,7 +13,7 @@ package body Slim_Test.Execution_Time is
    end "+";
 
    function "-" (Left, Right : Time) return Time_Span is
-      Span : constant Duration := Ada.Real_Time.To_Duration (Right - Left);
+      Span : constant Duration := Ada.Real_Time.To_Duration (Left - Right);
    begin
       return Time_Span (Span * 1000.0);
    end "-";
